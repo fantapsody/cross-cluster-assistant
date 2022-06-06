@@ -24,7 +24,7 @@ var _ reconcile.Reconciler = &ServiceSyncerReconciler{}
 var systemNS = map[string]string{
 	"kube-system": "",
 	"kube-public": "",
-	"sn-system": "",
+	"sn-system":   "",
 }
 
 const (
@@ -46,6 +46,9 @@ func (s *ServiceSyncerReconciler) Reconcile(ctx context.Context, request reconci
 		Name:      request.Name,
 	}, svc)
 	if err != nil {
+		if apierrors.IsNotFound(err) {
+			return reconcile.Result{}, nil
+		}
 		return reconcile.Result{}, err
 	}
 
